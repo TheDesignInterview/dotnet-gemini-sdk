@@ -1,86 +1,111 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using DotnetGeminiSDK.Model;
 using DotnetGeminiSDK.Model.Request;
 using DotnetGeminiSDK.Model.Response;
 using Content = DotnetGeminiSDK.Model.Request.Content;
 
-namespace DotnetGeminiSDK.Client.Interfaces;
-
-/// <summary>
-/// The GeminiClient interface provides a set of methods to interact with Google Gemini API.
-/// </summary>
-public interface IGeminiClient
+namespace DotnetGeminiSDK.Client.Interfaces
 {
-    Task<GeminiMessageResponse?> TextPrompt(
-        string message,
-        GenerationConfig? generationConfig = null,
-        SafetySetting? safetySetting = null
-    );
+    public interface IGeminiClient
+    {
+        Task<GeminiMessageResponse?> TextPrompt(
+            string model,
+            string message,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null
+        );
 
-    Task<GeminiMessageResponse?> TextPrompt(
-        List<Content> messages,
-        GenerationConfig? generationConfig = null,
-        SafetySetting? safetySetting = null
-    );
+        Task<GeminiMessageResponse?> TextPrompt(
+            string model,
+            List<Content> messages,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null
+        );
 
-    Task<GeminiCountTokenMessageResponse?> CountTokens(
-        string message,
-        GenerationConfig? generationConfig = null,
-        SafetySetting? safetySetting = null
-    );
+        Task<GeminiCountTokenMessageResponse?> CountTokens(
+            string model,
+            string message,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null
+        );
 
-    Task<GeminiCountTokenMessageResponse?> CountTokens(
-        List<string> messages,
-        GenerationConfig? generationConfig = null,
-        SafetySetting? safetySetting = null
-    );
+        Task<GeminiCountTokenMessageResponse?> CountTokens(
+            string model,
+            List<string> messages,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null
+        );
 
-    Task<GeminiCountTokenMessageResponse?> CountTokens(
-        List<Content> messages,
-        GenerationConfig? generationConfig = null,
-        SafetySetting? safetySetting = null
-    );
+        Task<GeminiCountTokenMessageResponse?> CountTokens(
+            string model,
+            List<Content> messages,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null
+        );
 
-    Task StreamTextPrompt(
-        string message,
-        Action<string?> callback,
-        GenerationConfig? generationConfig = null,
-        SafetySetting? safetySetting = null,
-        bool useSSE = false
-    );
+        Task StreamTextPrompt(
+            string model,
+            string message,
+            Action<string?> callback,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null,
+            bool useSse = false
+        );
 
-    Task StreamTextPrompt(
-        List<Content> messages,
-        Action<string?> callback,
-        GenerationConfig? generationConfig = null,
-        SafetySetting? safetySetting = null,
-        bool useSSE = false
-    );
+        Task StreamTextPrompt(
+            string model,
+            List<Content> messages,
+            Action<string?> callback,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null,
+            bool useSse = false
+        );
 
-    Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType imageMimeType);
+        Task<GeminiMessageResponse?> ImagePrompt(
+            string model,
+            string message,
+            byte[] image,
+            ImageMimeType imageMimeType
+        );
 
-    Task<GeminiMessageResponse?> ImagePrompt(string message, string base64Image, ImageMimeType imageMimeType);
+        Task<GeminiMessageResponse?> ImagePrompt(
+            string model,
+            string message,
+            string base64Image,
+            ImageMimeType imageMimeType
+        );
 
-    Task<GeminiModelResponse?> GetModel(string modelName);
+        Task<GeminiModelResponse?> GetModel(string model);
 
-    Task<RootGeminiModelResponse?> GetModels();
+        Task<RootGeminiModelResponse?> GetModels();
 
-    Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(string message, string model = "models/embedding-001");
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(
+            string model,
+            string message
+        );
 
-    Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<string> message,
-        string model = "models/embedding-001");
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(
+            string model,
+            List<string> message
+        );
 
-    Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<Content> message,
-        string model = "models/embedding-001");
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(
+            string model,
+            List<Content> message
+        );
 
-    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(string message,
-        string model = "models/embedding-001");
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(
+            string model,
+            string message
+        );
 
-    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<string> message,
-        string model = "models/embedding-001");
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(
+            string model,
+            List<string> message
+        );
 
-    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<Content> message,
-        string model = "models/embedding-001");
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(
+            string model,
+            List<Content> message
+        );
+    }
 }

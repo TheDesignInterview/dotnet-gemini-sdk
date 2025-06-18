@@ -12,35 +12,27 @@ public class GeminiClientTests
 {
     private readonly Mock<IApiRequester> _apiRequesterMock = new Mock<IApiRequester>();
     private readonly GeminiClient _client;
+    private const string TestModel = "gemini-test-model"; // Define a constant for the model name
 
     public GeminiClientTests()
     {
         _client = new GeminiClient(new GoogleGeminiConfig(), _apiRequesterMock.Object);
     }
-
-
+    
     [Fact]
     public async Task TextPrompt_WithSingleMessage_ReturnsResponse()
     {
-        var part = new Model.Response.Part(){
-            Text = "test response text"
-        };
-        var content = new Model.Response.Content(){
-            Parts = new List<Model.Response.Part>{part}
-        };
-        var candidate = new Candidate(){
-            Content = content
-        };
-        var expectedResponse = new GeminiMessageResponse{
-            Candidates = new List<Model.Response.Candidate>{candidate}
-        };
+        var part = new Model.Response.Part { Text = "test response text" };
+        var content = new Model.Response.Content { Parts = new List<Model.Response.Part> { part } };
+        var candidate = new Candidate { Content = content };
+        var expectedResponse = new GeminiMessageResponse { Candidates = new List<Candidate> { candidate } };
 
         var message = "Test message";
             
         _apiRequesterMock.Setup(r => r.PostAsync<GeminiMessageResponse>(It.IsAny<string>(), It.IsAny<GeminiMessageRequest>()))
             .ReturnsAsync(expectedResponse);
 
-        var response = await _client.TextPrompt(message);
+        var response = await _client.TextPrompt(TestModel, message);
 
         Assert.NotNull(response);
         Assert.Equal(expectedResponse, response);
@@ -55,7 +47,7 @@ public class GeminiClientTests
         _apiRequesterMock.Setup(r => r.PostAsync<GeminiCountTokenMessageResponse>(It.IsAny<string>(), It.IsAny<GeminiMessageRequest>()))
             .ReturnsAsync(expectedResponse);
 
-        var response = await _client.CountTokens(message);
+        var response = await _client.CountTokens(TestModel, message);
 
         Assert.NotNull(response);
         Assert.Equal(expectedResponse, response);
@@ -65,16 +57,14 @@ public class GeminiClientTests
     public async Task CountTokens_EmptyMessage_ThrowsArgumentException()
     {
         var message = "";
-
-        await Assert.ThrowsAsync<ArgumentException>(() => _client.CountTokens(message));
+        await Assert.ThrowsAsync<ArgumentException>(() => _client.CountTokens(TestModel, message));
     }
 
     [Fact]
     public async Task CountTokens_NullMessage_ThrowsArgumentException()
     {
         string? message = null;
-
-        await Assert.ThrowsAsync<ArgumentException>(() => _client.CountTokens(message));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _client.CountTokens(TestModel, message!));
     }
 
     [Fact]
@@ -87,7 +77,7 @@ public class GeminiClientTests
         _apiRequesterMock.Setup(r => r.PostAsync<GeminiMessageResponse>(It.IsAny<string>(), It.IsAny<GeminiMessageRequest>()))
             .ReturnsAsync(expectedResponse);
 
-        var response = await _client.ImagePrompt(message, image, mimeType);
+        var response = await _client.ImagePrompt(TestModel, message, image, mimeType);
 
         Assert.NotNull(response);
         Assert.Equal(expectedResponse, response);
@@ -100,17 +90,17 @@ public class GeminiClientTests
         var image = new byte[] { 0x12, 0x34, 0x56 };
         var mimeType = ImageMimeType.Jpeg;
 
-        await Assert.ThrowsAsync<ArgumentException>(() => _client.ImagePrompt(message, image, mimeType));
+        await Assert.ThrowsAsync<ArgumentException>(() => _client.ImagePrompt(TestModel, message, image, mimeType));
     }
 
     [Fact]
     public async Task ImagePrompt_WithEmptyImage_ThrowsArgumentException()
     {
-        const string? message = "Test message";
+        const string message = "Test message";
         var image = Array.Empty<byte>();
         const ImageMimeType mimeType = ImageMimeType.Jpeg;
 
-        await Assert.ThrowsAsync<ArgumentException>(() => _client.ImagePrompt(message, image, mimeType));
+        await Assert.ThrowsAsync<ArgumentException>(() => _client.ImagePrompt(TestModel, message, image, mimeType));
     }
 
     [Fact]
@@ -120,7 +110,7 @@ public class GeminiClientTests
         var image = new byte[] { 0x12, 0x34, 0x56 };
         var mimeType = ImageMimeType.Jpeg;
 
-        await Assert.ThrowsAsync<ArgumentException>(() => _client.ImagePrompt(message, image, mimeType));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _client.ImagePrompt(TestModel, message!, image, mimeType));
     }
 
     [Fact]
@@ -141,7 +131,6 @@ public class GeminiClientTests
     public async Task GetModel_WithEmptyModelName_ThrowsArgumentException()
     {
         var modelName = "";
-
         await Assert.ThrowsAsync<ArgumentException>(() => _client.GetModel(modelName));
     }
 
@@ -149,8 +138,7 @@ public class GeminiClientTests
     public async Task GetModel_WithNullModelName_ThrowsArgumentException()
     {
         string? modelName = null;
-
-        await Assert.ThrowsAsync<ArgumentException>(() => _client.GetModel(modelName));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _client.GetModel(modelName!));
     }
         
     [Fact]
