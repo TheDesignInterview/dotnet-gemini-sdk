@@ -1,15 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <ImplicitUsings>false</ImplicitUsings>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <LangVersion>latest</LangVersion>
-        <Version>1.0.8</Version>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <Version>1.0.0</Version>
+        <PackageId>TheDesignInterview.DotnetGeminiSDK</PackageId>
+        <Authors>TheDesignInterview</Authors>
+        <Company>TheDesignInterview</Company>
+        <Description>
+            A lightweight, dependency-free .NET SDK for the Google Gemini REST API.
+            This client supports text prompts, token counting, and structured JSON output via response schemas.
+        </Description>
+        <PackageProjectUrl>https://github.com/TheDesignInterview/dotnet-gemini-sdk</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/TheDesignInterview/dotnet-gemini-sdk.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>gemini;google;ai;llm;sdk;rest;dotnet</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+
     </PropertyGroup>
 
     <ItemGroup>
-        <None Update="README.md" Pack="true" PackagePath=""/>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
