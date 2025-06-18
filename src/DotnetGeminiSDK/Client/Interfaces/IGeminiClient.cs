@@ -62,20 +62,25 @@ public interface IGeminiClient
     Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType imageMimeType);
 
     Task<GeminiMessageResponse?> ImagePrompt(string message, string base64Image, ImageMimeType imageMimeType);
-        
+
     Task<GeminiModelResponse?> GetModel(string modelName);
 
     Task<RootGeminiModelResponse?> GetModels();
 
     Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(string message, string model = "models/embedding-001");
-        
-    Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<string> message, string model = "models/embedding-001");
-        
-    Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<Content> message, string model = "models/embedding-001");
-        
-    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(string message, string model = "models/embedding-001");
-        
-    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<string> message, string model = "models/embedding-001");
-        
-    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<Content> message, string model = "models/embedding-001");
+
+    Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<string> message,
+        string model = "models/embedding-001");
+
+    Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<Content> message,
+        string model = "models/embedding-001");
+
+    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(string message,
+        string model = "models/embedding-001");
+
+    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<string> message,
+        string model = "models/embedding-001");
+
+    Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<Content> message,
+        string model = "models/embedding-001");
 }
