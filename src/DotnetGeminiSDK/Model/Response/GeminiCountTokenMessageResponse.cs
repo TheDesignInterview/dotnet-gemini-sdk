@@ -1,10 +1,9 @@
 using Newtonsoft.Json;
 
-namespace DotnetGeminiSDK.Model.Response
+namespace DotnetGeminiSDK.Model.Response;
+
+public class GeminiCountTokenMessageResponse
 {
-    public class GeminiCountTokenMessageResponse
-    {
-        [JsonProperty("totalTokens")]
-        public long TotalTokens { get; set; }
-    }
+    [JsonProperty("totalTokens")]
+    public long TotalTokens { get; set; }
 }
