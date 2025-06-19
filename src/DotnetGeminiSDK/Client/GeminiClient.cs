@@ -174,7 +174,7 @@ namespace DotnetGeminiSDK.Client
             ArgumentException.ThrowIfNullOrWhiteSpace(model);
             ArgumentException.ThrowIfNullOrWhiteSpace(message);
             ArgumentException.ThrowIfNullOrWhiteSpace(base64Image);
-            
+
             var mimeTypeString = GetMimeTypeString(imageMimeType);
             var promptUrl = $"{_config.BaseUrl}/{model}:generateContent?key={_config.ApiKey}";
             var request = BuildImageGeminiRequest(message, base64Image, mimeTypeString);

@@ -56,8 +56,7 @@ public class Startup
         services.AddGeminiClient(config =>
         {
             config.ApiKey = "YOUR_GOOGLE_GEMINI_API_KEY";
-            config.ImageBaseUrl = "CURRENTLY_IMAGE_BASE_URL";
-            config.TextBaseUrl = "CURRENTLY_IMAGE_BASE_URL";
+            config.BaseUrl = "https://generativelanguage.googleapis.com/v1beta/models"; // Optional - uses default if not specified
         });
     }
 }
@@ -83,7 +82,7 @@ public class YourClass
 
     public async Task Example()
     {
-        var response = await _geminiClient.TextPrompt("Text for processing");
+        var response = await _geminiClient.TextPrompt("gemini-pro", "Text for processing");
         // Process the response as needed
     }
 }
@@ -107,7 +106,7 @@ public class YourClass
 
     public async Task Example()
     {
-        var response = await _geminiClient.TextPrompt("Text for processing");
+        var response = await _geminiClient.TextPrompt("gemini-pro", "Text for processing");
         // Process the response as needed
     }
 }
@@ -132,7 +131,7 @@ Prompt the Gemini API with a text message using the `TextPrompt` method:
 
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
-var response = await geminiClient.TextPrompt("Write a story about a magic backpack");
+var response = await geminiClient.TextPrompt("gemini-pro", "Write a story about a magic backpack");
 ```
 
 ### Stream Text Prompt 🔁
@@ -143,7 +142,7 @@ Prompt the Gemini API with a text message using the `StreamTextPrompt` method:
 
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
-var response = await geminiClient.StreamTextPrompt("Write a story about a magic backpack", (chunk) => {
+await geminiClient.StreamTextPrompt("gemini-pro", "Write a story about a magic backpack", (chunk) => {
   Console.WriteLine("Process your chunk of response here");
 });
 ```
@@ -169,7 +168,7 @@ var messages = new List<Content>
     // Add more Content objects as needed
 };
 
-var response = await geminiClient.TextPrompt(messages);
+var response = await geminiClient.TextPrompt("gemini-pro", messages);
 ```
 
 ### Get Model 📒
@@ -177,7 +176,7 @@ Get the specific model details of Gemini using `GetModel` method:
 
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
-var response = await geminiClient.GetModel("gemini-model-v1");
+var response = await geminiClient.GetModel("gemini-pro");
 ```
 
 ### List all models 🔖
@@ -193,7 +192,7 @@ Prompt the Gemini API with a text message using the `CountTokens` method:
 
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
-var response = await geminiClient.CountTokens("Write a story about a magic backpack");
+var response = await geminiClient.CountTokens("gemini-pro", "Write a story about a magic backpack");
 ```
 
 > [!NOTE]
@@ -206,7 +205,7 @@ Prompt the Gemini API with an image and a text message using the `ImagePrompt` m
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
 var image = File.ReadAllBytes("path/to/your/image.jpg");
-var response = await geminiClient.ImagePrompt("Describe this image", image, ImageMimeType.ImageJpeg);
+var response = await geminiClient.ImagePrompt("gemini-pro-vision", "Describe this image", image, ImageMimeType.Jpeg);
 ```
 
 #### Using Base64 String
@@ -215,7 +214,7 @@ Prompt the Gemini API with an base64 string and a text message using the `ImageP
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
 var base64Image = "image-as-base64";
-var response = await geminiClient.ImagePrompt("Describe this image in details", base64Image, ImageMimeType.ImageJpeg);
+var response = await geminiClient.ImagePrompt("gemini-pro-vision", "Describe this image in details", base64Image, ImageMimeType.Jpeg);
 ```
 
 ### Embedded 🪡
@@ -223,7 +222,7 @@ Prompt the Gemini API with a text message and using embedded technique using the
 
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
-var response = await geminiClient.EmbeddedContentsPrompt("Write a story about a magic backpack");
+var response = await geminiClient.EmbeddedContentsPrompt("embedding-001", "Write a story about a magic backpack");
 ```
 
 > [!NOTE]
@@ -234,7 +233,7 @@ Prompt the Gemini API with a text message and using batch embedded technique usi
 
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
-var response = await geminiClient.BatchEmbeddedContentsPrompt("Write a story about a magic backpack");
+var response = await geminiClient.BatchEmbeddedContentsPrompt("embedding-001", "Write a story about a magic backpack");
 ```
 
 > [!NOTE]
@@ -281,6 +280,7 @@ var generationConfig = new GenerationConfig
 };
 
 var response = await geminiClient.TextPrompt(
+    "gemini-pro",
     "Generate a profile for a software developer",
     generationConfig
 );
@@ -325,10 +325,48 @@ var generationConfig = new GenerationConfig
 };
 
 var response = await geminiClient.TextPrompt(
+    "gemini-pro",
     "Generate 3 sample e-commerce products",
     generationConfig
 );
 ```
+
+### Exception Handling ⚠️
+The SDK implements comprehensive argument validation for all methods. The following exceptions may be thrown:
+
+#### ArgumentNullException
+Thrown when required parameters are null:
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+
+// This will throw ArgumentNullException
+await geminiClient.TextPrompt("gemini-pro", (string)null); // message parameter is null
+await geminiClient.TextPrompt("gemini-pro", (List<Content>)null); // messages parameter is null
+await geminiClient.StreamTextPrompt("gemini-pro", "Hello", null); // callback parameter is null
+```
+
+#### ArgumentException
+Thrown when parameters are invalid:
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+
+// These will throw ArgumentException
+await geminiClient.TextPrompt("", "Hello world"); // empty model name
+await geminiClient.TextPrompt("   ", "Hello world"); // whitespace-only model name
+await geminiClient.TextPrompt("gemini-pro", ""); // empty message
+await geminiClient.TextPrompt("gemini-pro", new List<Content>()); // empty messages list
+await geminiClient.ImagePrompt("gemini-pro-vision", "Describe", new byte[0], ImageMimeType.Jpeg); // empty image array
+```
+
+#### Common Validation Rules
+- **String parameters**: Must not be null, empty, or whitespace-only
+- **Collection parameters**: Must not be null or empty
+- **Object parameters**: Must not be null
+- **Callback parameters**: Must not be null (for streaming methods)
+
+All validation is performed at the method entry point before making API calls, ensuring fast failure and clear error messages.
 
 ## Contributing 🤝
 Contributions are welcome! Feel free to open issues or pull requests to enhance the SDK.
